@@ -4,11 +4,22 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
+import { useRouter, usePathname } from "next/navigation";
 
 const Nav = () => {
+  const router = useRouter();
+  const pathName = usePathname();
   const { data: session } = useSession();
   const [providers, setProviders] = useState(null);
   const [toggleDropdown, setToggleDropdown] = useState(false);
+
+  useEffect(() => {
+    if (!session?.user) {
+      if (pathName === "/profile") {
+        router.push("/");
+      }
+    }
+  }, [session]);
 
   useEffect(() => {
     const setUpProviders = async () => {
@@ -37,7 +48,14 @@ const Nav = () => {
             <Link href="/create-prompt" className="black_btn">
               Create Post
             </Link>
-            <button type="button" onClick={signOut} className="outline_btn">
+            <button
+              type="button"
+              onClick={() => {
+                signOut();
+                router.push("/");
+              }}
+              className="outline_btn"
+            >
               Sign Out
             </button>
             <Link href="/profile">
@@ -97,9 +115,11 @@ const Nav = () => {
                 </Link>
                 <button
                   type="button"
+                  href="/"
                   onClick={() => {
                     setToggleDropdown(false);
-                    signout();
+                    signOut();
+                    router.push("/");
                   }}
                   className="mat-5 w-full black_btn"
                 >

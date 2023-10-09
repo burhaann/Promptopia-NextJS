@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import PromptCard from "./PromptCard";
-
 const PromptCardList = ({ data, handleTagClick }) => {
   return (
     <div className="mt-16 prompt_layout">
@@ -18,6 +17,7 @@ const PromptCardList = ({ data, handleTagClick }) => {
 const Feed = () => {
   const [posts, setPosts] = useState([]);
 
+  const [searchedPosts, setSearchedPosts] = useState([]);
   const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
@@ -31,7 +31,24 @@ const Feed = () => {
     fetchPosts();
   }, []);
 
-  const handleSearchChange = (e) => {};
+  useEffect(() => {
+    const filteredPosts = posts.filter((post) => {
+      const fullPost =
+        post.creator.email + post.creator.username + post.prompt + post.tag;
+      const regex = new RegExp(searchText, "i");
+      return regex.test(fullPost);
+    });
+    setSearchedPosts(filteredPosts);
+  }, [searchText]);
+
+  const handleSearchChange = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const handleTagClick = (tagName) => {
+    setSearchText(tagName);
+  };
+
   return (
     <section className="feed">
       <form className="relative w-full flex-center">
@@ -44,7 +61,10 @@ const Feed = () => {
           className="search_input peer"
         />
       </form>
-      <PromptCardList data={posts} handleTagClick={() => {}} />
+      <PromptCardList
+        data={searchText === "" ? posts : searchedPosts}
+        handleTagClick={handleTagClick}
+      />
     </section>
   );
 };
