@@ -27,8 +27,8 @@ const UserProfile = ({ params }) => {
 
   return (
     <Profile
-      name={session?.user.id === params.id ? "My" : userName}
-      desc={`Welcome to ${userName}'s personalized profile page. Explore their exceptional prompts`}
+      name={userName}
+      desc={`Welcome to ${userName}'s personalized profile page. Explore  ${userName}'s exceptional prompts`}
       data={posts}
     />
   );
